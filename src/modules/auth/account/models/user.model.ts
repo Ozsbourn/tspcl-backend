@@ -3,6 +3,7 @@ import { Field, ID, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
 export class UserModel implements User {
+    
 	@Field(() => ID)
 	public id: string;
 
@@ -24,6 +25,11 @@ export class UserModel implements User {
   	public isVerified: boolean;
   	@Field(() => Boolean)
   	public isEmailVerified: boolean;
+
+  	@Field(() => Boolean)
+  	public isTotpEnabled: boolean;
+  	@Field(() => String, { nullable: true })
+    public totpSecret: string;
 
   	@Field(() => Date)
   	public createdAt: Date;

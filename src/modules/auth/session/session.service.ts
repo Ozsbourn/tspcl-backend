@@ -8,6 +8,7 @@ import { getSessionMetadata } from '@/src/shared/utils/session-metadata.util';
 import { RedisService } from '@/src/core/redis/redis.service';
 import { destroySession, saveSession } from '@/src/shared/utils/session.util';
 import { VerificationService } from '../verification/verification.service';
+import { TOTP } from 'otpauth';
 
 @Injectable()
 export class SessionService {
@@ -56,7 +57,7 @@ export class SessionService {
 	}
 
 	public async login(req: Request, input: LoginInput, userAgent: string) {
-		const { login, password } = input;
+		const { login, password, pin } = input;
 
 		const user = await this.prismaService.user.findFirst({
 			where: {
@@ -78,6 +79,26 @@ export class SessionService {
 		if (!user.isEmailVerified) {
 			await this.verificationService.sendVerificationToken(user);
 			throw new BadRequestException(`Your account isn't verified. Please check your email to do it and keep your account more safe in future.`);
+		}
+
+		if (user.isTotpEnabled) {
+			if (!pin) {
+				return { message: 'Need code to complete authorization' };
+			}
+
+			const totpSecret = user.totpSecret as string;
+			const totp = new TOTP({
+				issuer: 'tspcl',
+				label: `${user.email}`,
+				algorithm: 'SHA1',
+				digits: 6,
+				secret: totpSecret,
+			});
+			const delta = totp.validate({ token: pin });
+		
+			if (delta === null) {
+				throw new BadRequestException('Incorrect code');
+			}
 		}
 
 		const sessionMetadata = getSessionMetadata(req, userAgent);
