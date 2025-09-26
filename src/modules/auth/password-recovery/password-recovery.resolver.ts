@@ -17,5 +17,5 @@ export class PasswordRecoveryResolver {
   @Mutation(() => Boolean, { name: 'newPassword' })
   public async setNewPassword(@Args('data') input: NewPasswordInput) {
     return this.passwordRecoveryService.newPassword(input);
-  }
+  } 
 }
