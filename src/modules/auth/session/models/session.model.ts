@@ -1,4 +1,8 @@
-import { DeviceInfo, LocationInfo, SessionMetadata } from "@/src/shared/types/session-metadata.types";
+import {
+	DeviceInfo,
+	LocationInfo,
+	SessionMetadata,
+} from "@/src/shared/types/session-metadata.types";
 import { Field, ID, ObjectType } from "@nestjs/graphql";
 
 @ObjectType()
@@ -8,10 +12,10 @@ export class LocationModel implements LocationInfo {
 
 	@Field(() => String)
 	public city: string;
-	
+
 	@Field(() => Number)
 	public latitude: number;
-	
+
 	@Field(() => Number)
 	public longitude: number;
 }
@@ -26,11 +30,11 @@ export class DeviceModel implements DeviceInfo {
 
 	@Field(() => String)
 	public type: string;
-};
+}
 
 @ObjectType()
 export class SessionMetadataModel implements SessionMetadata {
-	@Field(() => LocationModel)	
+	@Field(() => LocationModel)
 	public location: LocationModel;
 
 	@Field(() => DeviceModel)
@@ -38,7 +42,7 @@ export class SessionMetadataModel implements SessionMetadata {
 
 	@Field(() => String)
 	public ip: string;
-}; 
+}
 
 @ObjectType()
 export class SessionModel {
@@ -53,4 +57,4 @@ export class SessionModel {
 
 	@Field(() => SessionMetadataModel)
 	public metadata: SessionMetadataModel;
-};
+}

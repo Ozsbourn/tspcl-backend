@@ -1,14 +1,21 @@
 import { TokenType, type User } from "@/prisma/generated";
 import { PrismaService } from "@/src/core/prisma/prisma.service";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
-export async function generateToken(prismaService: PrismaService, user: User, type: TokenType, isUUID: boolean = true) {
+export async function generateToken(
+	prismaService: PrismaService,
+	user: User,
+	type: TokenType,
+	isUUID: boolean = true
+) {
 	let token: string;
 
 	if (isUUID) {
 		token = uuidv4();
 	} else {
-		token = Math.floor(Math.random() * (1000000 - 100000) + 100000).toString();
+		token = Math.floor(
+			Math.random() * (1000000 - 100000) + 100000
+		).toString();
 	}
 
 	const expiresIn = new Date(new Date().getTime() + 300000);
@@ -17,14 +24,14 @@ export async function generateToken(prismaService: PrismaService, user: User, ty
 			type,
 			user: {
 				id: user.id,
-			}
-		}
+			},
+		},
 	});
 	if (existingToken) {
 		await prismaService.token.delete({
 			where: {
 				id: existingToken.id,
-			}
+			},
 		});
 	}
 
@@ -36,12 +43,12 @@ export async function generateToken(prismaService: PrismaService, user: User, ty
 			user: {
 				connect: {
 					id: user.id,
-				}
-			}
+				},
+			},
 		},
 		include: {
 			user: true,
-		}
+		},
 	});
 	return newToken;
 }

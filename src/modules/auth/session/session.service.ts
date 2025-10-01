@@ -1,21 +1,29 @@
-import { PrismaService } from '@/src/core/prisma/prisma.service';
-import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { LoginInput } from './inputs/login.input';
-import { verify } from 'argon2';
-import type { Request } from 'express';
-import { ConfigService } from '@nestjs/config';
-import { getSessionMetadata } from '@/src/shared/utils/session-metadata.util';
-import { RedisService } from '@/src/core/redis/redis.service';
-import { destroySession, saveSession } from '@/src/shared/utils/session.util';
-import { VerificationService } from '../verification/verification.service';
-import { TOTP } from 'otpauth';
+import { PrismaService } from "@/src/core/prisma/prisma.service";
+import {
+	BadRequestException,
+	ConflictException,
+	Injectable,
+	NotFoundException,
+	UnauthorizedException,
+} from "@nestjs/common";
+import { LoginInput } from "./inputs/login.input";
+import { verify } from "argon2";
+import type { Request } from "express";
+import { ConfigService } from "@nestjs/config";
+import { getSessionMetadata } from "@/src/shared/utils/session-metadata.util";
+import { RedisService } from "@/src/core/redis/redis.service";
+import { destroySession, saveSession } from "@/src/shared/utils/session.util";
+import { VerificationService } from "../verification/verification.service";
+import { TOTP } from "otpauth";
 
 @Injectable()
 export class SessionService {
-	public constructor(private readonly prismaService: PrismaService, 
-		private readonly redisService: RedisService, 
-		private readonly configService: ConfigService, 
-		private readonly verificationService: VerificationService) {}
+	public constructor(
+		private readonly prismaService: PrismaService,
+		private readonly redisService: RedisService,
+		private readonly configService: ConfigService,
+		private readonly verificationService: VerificationService
+	) {}
 
 	public async findByUser(req: Request) {
 		const userId = req.session.userId;
@@ -23,31 +31,33 @@ export class SessionService {
 			throw new NotFoundException(`User wasn't found at session`);
 		}
 
-		const keys = await this.redisService.keys('*');
+		const keys = await this.redisService.keys("*");
 		const userSessions: any = [];
 		for (const key of keys!) {
 			const sessionData = await this.redisService.get(key);
 
 			if (sessionData) {
 				const session = JSON.parse(sessionData);
-				
+
 				if (session.userId === userId) {
 					userSessions.push({
 						...session,
-						id: key.split(':')[1],
+						id: key.split(":")[1],
 					});
 				}
 			}
 		}
 
 		userSessions.sort((a, b) => b.createdAt - a.createdAt);
-		return userSessions.filter(session => session.id !== req.session.id);
+		return userSessions.filter((session) => session.id !== req.session.id);
 	}
 
 	public async findCurrent(req: Request) {
 		const sessionId = req.session.id;
 
-		const sessionData = await this.redisService.get(`${this.configService.getOrThrow<string>('SESSION_FOLDER')}${sessionId}`);
+		const sessionData = await this.redisService.get(
+			`${this.configService.getOrThrow<string>("SESSION_FOLDER")}${sessionId}`
+		);
 		const session = JSON.parse(sessionData!);
 
 		return {
@@ -64,8 +74,8 @@ export class SessionService {
 				OR: [
 					{ username: { equals: login } },
 					{ email: { equals: login } },
-				]
-			}
+				],
+			},
 		});
 		if (!user) {
 			throw new NotFoundException(`User wasn't found!`);
@@ -73,31 +83,32 @@ export class SessionService {
 
 		const isValidPassword = await verify(user.password, password);
 		if (!isValidPassword) {
-			throw new UnauthorizedException('Wrong password!');
-		} 
+			throw new UnauthorizedException("Wrong password!");
+		}
 
 		if (!user.isEmailVerified) {
 			await this.verificationService.sendVerificationToken(user);
-			throw new BadRequestException(`Your account isn't verified. Please check your email to do it and keep your account more safe in future.`);
+			throw new BadRequestException(
+				`Your account isn't verified. Please check your email to do it and keep your account more safe in future.`
+			);
 		}
 
 		if (user.isTotpEnabled) {
 			if (!pin) {
-				return { message: 'Need code to complete authorization' };
+				return { message: "Need code to complete authorization" };
 			}
 
-			const totpSecret = user.totpSecret as string;
 			const totp = new TOTP({
-				issuer: 'tspcl',
+				issuer: "tspcl",
 				label: `${user.email}`,
-				algorithm: 'SHA1',
+				algorithm: "SHA1",
 				digits: 6,
-				secret: totpSecret,
+				secret: user.totpSecret as string,
 			});
 			const delta = totp.validate({ token: pin });
-		
+
 			if (delta === null) {
-				throw new BadRequestException('Incorrect code');
+				throw new BadRequestException("Incorrect code");
 			}
 		}
 
@@ -110,16 +121,20 @@ export class SessionService {
 	}
 
 	public async clearSession(req: Request) {
-		req.res?.clearCookie(this.configService.getOrThrow<string>('SESSION_NAME'));
+		req.res?.clearCookie(
+			this.configService.getOrThrow<string>("SESSION_NAME")
+		);
 		return true;
 	}
 
 	public async removeSession(req: Request, id: string) {
 		if (req.session.id === id) {
-			throw new ConflictException('Current session cannot be deleted');
+			throw new ConflictException("Current session cannot be deleted");
 		}
 
-		await this.redisService.del(`${this.configService.getOrThrow<string>('SESSION_FOLDER')}${id}`);
+		await this.redisService.del(
+			`${this.configService.getOrThrow<string>("SESSION_FOLDER")}${id}`
+		);
 
 		return true;
 	}

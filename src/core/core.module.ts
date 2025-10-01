@@ -12,27 +12,29 @@ import { VerificationModule } from "../modules/auth/verification/verification.mo
 import { MailModule } from "../modules/libs/mail/mail.module";
 import { PasswordRecoveryModule } from "../modules/auth/password-recovery/password-recovery.module";
 import { TotpModule } from "../modules/auth/totp/totp/totp.module";
+import { DeactivateModule } from "../modules/auth/deactivate/deactivate.module";
 
 @Module({
-    imports: [
-        ConfigModule.forRoot({
-            ignoreEnvFile: !IS_DEV_ENV,
-            isGlobal: true,
-        }),
-        GraphQLModule.forRootAsync({
-            driver: ApolloDriver,
-            imports: [ConfigModule],
-            useFactory: getGraphQLConfig,
-            inject: [ConfigService],
-        }),
-        PrismaModule,
-        RedisModule,
-        AccountModule,
-        SessionModule,
-        MailModule,
-        VerificationModule,
-        PasswordRecoveryModule,
-        TotpModule,
-    ],
+	imports: [
+		ConfigModule.forRoot({
+			ignoreEnvFile: !IS_DEV_ENV,
+			isGlobal: true,
+		}),
+		GraphQLModule.forRootAsync({
+			driver: ApolloDriver,
+			imports: [ConfigModule],
+			useFactory: getGraphQLConfig,
+			inject: [ConfigService],
+		}),
+		PrismaModule,
+		RedisModule,
+		AccountModule,
+		SessionModule,
+		MailModule,
+		VerificationModule,
+		PasswordRecoveryModule,
+		TotpModule,
+		DeactivateModule,
+	],
 })
 export class CoreModule {}

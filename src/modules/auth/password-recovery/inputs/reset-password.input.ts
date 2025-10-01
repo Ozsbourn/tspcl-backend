@@ -8,4 +8,4 @@ export class ResetPasswordInput {
 	@IsNotEmpty()
 	@IsEmail()
 	public email: string;
-};
+}

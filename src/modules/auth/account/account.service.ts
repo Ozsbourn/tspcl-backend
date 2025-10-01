@@ -1,18 +1,21 @@
-import { PrismaService } from '@/src/core/prisma/prisma.service';
-import { ConflictException, Injectable } from '@nestjs/common';
-import { CreateUserInput } from './inputs/create-user.input';
-import { hash } from 'argon2';
-import { VerificationService } from '../verification/verification.service';
+import { PrismaService } from "@/src/core/prisma/prisma.service";
+import { ConflictException, Injectable } from "@nestjs/common";
+import { CreateUserInput } from "./inputs/create-user.input";
+import { hash } from "argon2";
+import { VerificationService } from "../verification/verification.service";
 
 @Injectable()
 export class AccountService {
-	public constructor(private readonly prismaService: PrismaService, private readonly verificationService: VerificationService) {}
+	public constructor(
+		private readonly prismaService: PrismaService,
+		private readonly verificationService: VerificationService
+	) {}
 
 	public async me(id: string) {
 		const user = await this.prismaService.user.findUnique({
 			where: {
-				id
-			}
+				id,
+			},
 		});
 
 		return user;
@@ -22,23 +25,22 @@ export class AccountService {
 		const { username, email, password } = input;
 
 		const isUsernameExists = await this.prismaService.user.findUnique({
-			where: { 
-				username 
-			}
+			where: {
+				username,
+			},
 		});
 		if (isUsernameExists) {
-			throw new ConflictException('This username already exists.');
+			throw new ConflictException("This username already exists.");
 		}
 
 		const isEmailExists = await this.prismaService.user.findUnique({
-			where: { 
-				email 
-			}
+			where: {
+				email,
+			},
 		});
 		if (isEmailExists) {
-			throw new ConflictException('This email already exists.');
+			throw new ConflictException("This email already exists.");
 		}
-
 
 		const user = await this.prismaService.user.create({
 			data: {
@@ -46,7 +48,7 @@ export class AccountService {
 				email,
 				password: await hash(password),
 				displayName: username,
-			}
+			},
 		});
 
 		await this.verificationService.sendVerificationToken(user);

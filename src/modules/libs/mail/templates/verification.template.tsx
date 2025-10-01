@@ -19,7 +19,7 @@ export function VerificationTemplate({ domain, token } : VerificationTemplatePro
 					<Section className='text-center mb-8'>
 						<Heading className='text-3xl text-black font-bold'>Your Email Verificating</Heading>
 						
-						<Text className='text-base text-black'>Thanks for your regisration on Twitch! For verification of your email, please click on this button below:</Text>
+						<Text className='text-base text-black'>Thanks for your regisration on Streplat! For verification of your email, please click on this button below:</Text>
 						<Link href={verificationLink} className='inline-flex justify-center items-center rounded-md text-sm font-medium text-white bg-[#18B9AE] px-5 py-2'>
 							Verify Email
 						</Link>

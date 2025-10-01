@@ -1,6 +1,12 @@
 import { IsPasswordsMatchingConstraint } from "@/src/shared/decorators/is-password-matching-constraint.decorator";
 import { Field, InputType } from "@nestjs/graphql";
-import { IsNotEmpty, IsString, IsUUID, MinLength, Validate } from "class-validator";
+import {
+	IsNotEmpty,
+	IsString,
+	IsUUID,
+	MinLength,
+	Validate,
+} from "class-validator";
 
 @InputType()
 export class NewPasswordInput {
@@ -18,7 +24,7 @@ export class NewPasswordInput {
 	public passwordRepeat: string;
 
 	@Field(() => String)
-	@IsUUID('4')
+	@IsUUID("4")
 	@IsNotEmpty()
 	public token: string;
-};
+}
