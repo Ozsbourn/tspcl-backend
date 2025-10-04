@@ -10,16 +10,21 @@ import { AuthModel } from "../account/models/auth.model";
 
 @Resolver("Deactivate")
 export class DeactivateResolver {
-    public constructor(private readonly deactivateService: DeactivateService) {}
+	public constructor(private readonly deactivateService: DeactivateService) {}
 
-    @Authorization()
-    @Mutation(() => AuthModel, { name: 'deactivateAccount' })
-    public async deactivate(
-        @Context() { req }: GqlContext,
-        @Args("data") input: DeactivateAccountInput,
-        @Authorized() user: User,
-        @UserAgent() userAgent: string
-    ) {
-      return this.deactivateService.deactivateAccount(req, input, user, userAgent);
-    }
+	@Authorization()
+	@Mutation(() => AuthModel, { name: "deactivateAccount" })
+	public async deactivate(
+		@Context() { req }: GqlContext,
+		@Args("data") input: DeactivateAccountInput,
+		@Authorized() user: User,
+		@UserAgent() userAgent: string
+	) {
+		return this.deactivateService.deactivateAccount(
+			req,
+			input,
+			user,
+			userAgent
+		);
+	}
 }

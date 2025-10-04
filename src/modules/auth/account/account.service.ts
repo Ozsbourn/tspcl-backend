@@ -1,5 +1,9 @@
 import { PrismaService } from "@/src/core/prisma/prisma.service";
-import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+	ConflictException,
+	Injectable,
+	UnauthorizedException,
+} from "@nestjs/common";
 import { CreateUserInput } from "./inputs/create-user.input";
 import { hash, verify } from "argon2";
 import { VerificationService } from "../verification/verification.service";
@@ -19,6 +23,9 @@ export class AccountService {
 			where: {
 				id,
 			},
+			include: {
+				socialLinks: true,
+			}
 		});
 
 		return user;
@@ -66,8 +73,8 @@ export class AccountService {
 				id: user.id,
 			},
 			data: {
-				email
-			}
+				email,
+			},
 		});
 
 		return true;
@@ -78,7 +85,7 @@ export class AccountService {
 
 		const isValidPassword = await verify(user.password, oldPassword);
 		if (!isValidPassword) {
-			throw new UnauthorizedException('Wrong password');
+			throw new UnauthorizedException("Wrong password");
 		}
 
 		await this.prismaService.user.update({
@@ -87,7 +94,7 @@ export class AccountService {
 			},
 			data: {
 				password: await hash(newPassword),
-			}
+			},
 		});
 
 		return true;

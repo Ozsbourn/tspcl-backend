@@ -9,7 +9,7 @@ export class CronService {
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly mailService: MailService,
-		private readonly storageService: StorageService,
+		private readonly storageService: StorageService
 	) {}
 
 	@Cron("0 0 * * *")

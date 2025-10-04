@@ -48,7 +48,7 @@ export class MailService {
 	public async sendAccoundDeletion(email: string) {
 		const html = await render(AccountDeletionTemplate());
 
-		return this.sendMail(email, 'Account deleted', html);
+		return this.sendMail(email, "Account deleted", html);
 	}
 
 	private sendMail(email: string, subject: string, html: string) {

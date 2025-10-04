@@ -38,9 +38,9 @@ import { ProfileModule } from "../modules/auth/profile/profile.module";
 		PasswordRecoveryModule,
 		TotpModule,
 		DeactivateModule,
-        CronModule,
-        StorageService,
-        ProfileModule,
+		CronModule,
+		StorageService,
+		ProfileModule,
 	],
 })
 export class CoreModule {}
