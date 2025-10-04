@@ -21,7 +21,6 @@ export function saveSession(
 				);
 			}
 
-			console.log(user);
 			resolve(user);
 		});
 	});

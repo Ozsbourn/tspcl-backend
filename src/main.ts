@@ -3,6 +3,7 @@ import { CoreModule } from "./core/core.module";
 import { ConfigService } from "@nestjs/config";
 import cookieParser from "cookie-parser";
 import session from "express-session";
+import { graphqlUploadExpress } from "graphql-upload-ts";
 import { ValidationPipe } from "@nestjs/common";
 import { ms, StringValue } from "./shared/utils/ms.util";
 import { parseBoolean } from "./shared/utils/parse-boolean.util";
@@ -15,6 +16,7 @@ async function bootstrap() {
 	const config = app.get(ConfigService);
 	const redis = app.get(RedisService);
 	app.use(cookieParser(config.getOrThrow<string>("COOKIES_SECRET")));
+	app.use(config.getOrThrow<string>('GRAPHQL_PREFIX'), graphqlUploadExpress());
 
 	app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
@@ -23,7 +25,6 @@ async function bootstrap() {
 			secret: config.getOrThrow<string>("SESSION_SECRET"),
 			name: config.getOrThrow<string>("SESSION_NAME"),
 			resave: false,
-			// saveUninitialized: false,
 			saveUninitialized: false,
 			cookie: {
 				domain: config.getOrThrow<string>("SESSION_DOMAIN"),

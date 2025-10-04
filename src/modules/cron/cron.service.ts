@@ -2,12 +2,14 @@ import { PrismaService } from "@/src/core/prisma/prisma.service";
 import { Injectable } from "@nestjs/common";
 import { MailService } from "../libs/mail/mail.service";
 import { Cron } from "@nestjs/schedule";
+import { StorageService } from "../libs/storage/storage.service";
 
 @Injectable()
 export class CronService {
 	public constructor(
 		private readonly prismaService: PrismaService,
-		private readonly mailService: MailService
+		private readonly mailService: MailService,
+		private readonly storageService: StorageService,
 	) {}
 
 	@Cron("0 0 * * *")
@@ -26,6 +28,8 @@ export class CronService {
 
 		for (const user of deactivatedAccounts) {
 			await this.mailService.sendAccoundDeletion(user.email);
+
+			this.storageService.remove(user.avatar as string);
 		}
 
 		await this.prismaService.user.deleteMany({
