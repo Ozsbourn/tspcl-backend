@@ -7,6 +7,21 @@ type AuthModel {
   user: UserModel
 }
 
+input ChangeEmailInput {
+  email: String!
+}
+
+input ChangePasswordInput {
+  newPassword: String!
+  oldPassword: String!
+}
+
+input ChangeProfileInfoInput {
+  bio: String!
+  displayName: String!
+  username: String!
+}
+
 input CreateUserInput {
   email: String!
   password: String!
@@ -49,8 +64,13 @@ input LoginInput {
 }
 
 type Mutation {
+  changeEmail(data: ChangeEmailInput!): UserModel!
+  changePassword(data: ChangePasswordInput!): UserModel!
+  changeUserAvatar(avatar: Upload!): Boolean!
+  changeUserInfo(data: ChangeProfileInfoInput!): Boolean!
   clearSessionCookie: Boolean!
   createUser(data: CreateUserInput!): UserModel!
+  createUserSocialLink(data: SocialLinkInput!): Boolean!
   deactivateAccount(data: DeactivateAccountInput!): AuthModel!
   disableTotpToUser: Boolean!
   enableTotpToUser(data: EnableTotpInput!): Boolean!
@@ -58,7 +78,11 @@ type Mutation {
   logoutUser: Boolean!
   newPassword(data: NewPasswordInput!): Boolean!
   removeSession(id: String!): Boolean!
+  removeUserAvatar: Boolean!
+  removeUserSocialLink(id: String!): Boolean!
+  reorderUserSocialLinks(list: [SocialLinkOrderInput!]!): Boolean!
   resetPassword(data: ResetPasswordInput!): Boolean!
+  updateUserSocialLink(data: SocialLinkInput!, id: String!): Boolean!
   verifyAccount(data: VerificationInput!): UserModel!
 }
 
@@ -69,10 +93,12 @@ input NewPasswordInput {
 }
 
 type Query {
+  findAllStreams(boundaries: StreamsQueryBoundariesInput!): [StreamModel!]!
   findCurrentSession: SessionModel!
   findProfile: UserModel!
   findSessionByUser: [SessionModel!]!
   generateTotpSecret: TotpModel!
+  getSocialLinks: Boolean!
 }
 
 input ResetPasswordInput {
@@ -92,10 +118,53 @@ type SessionModel {
   userId: String!
 }
 
+input SocialLinkInput {
+  title: String!
+  url: String!
+}
+
+type SocialLinkModel {
+  createdAt: DateTime!
+  id: ID!
+  position: Float!
+  title: String!
+  updatedAt: DateTime!
+  url: String!
+  userId: String!
+}
+
+input SocialLinkOrderInput {
+  id: String!
+  position: Float!
+}
+
+type StreamModel {
+  createdAt: DateTime!
+  id: ID!
+  ingressId: String
+  isLive: Boolean!
+  serverUrl: String
+  streamKey: String
+  thumbnailUrl: String
+  title: String!
+  updatedAt: DateTime!
+  user: UserModel!
+  userId: String!
+}
+
+input StreamsQueryBoundariesInput {
+  searchTerm: String
+  skip: Float
+  take: Float
+}
+
 type TotpModel {
   qrcodeUrl: String!
   secret: String!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
 
 type UserModel {
   avatar: String
@@ -110,6 +179,8 @@ type UserModel {
   isTotpEnabled: Boolean!
   isVerified: Boolean!
   password: String!
+  socialLinks: [SocialLinkModel!]!
+  stream: StreamModel!
   totpSecret: String
   updatedAt: DateTime!
   username: String!

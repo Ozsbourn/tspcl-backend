@@ -14,9 +14,9 @@ import { PasswordRecoveryModule } from "../modules/auth/password-recovery/passwo
 import { TotpModule } from "../modules/auth/totp/totp/totp.module";
 import { DeactivateModule } from "../modules/auth/deactivate/deactivate.module";
 import { CronModule } from "../modules/cron/cron.module";
-import { StorageService } from "../modules/libs/storage/storage.service";
 import { ProfileModule } from "../modules/auth/profile/profile.module";
 import { StreamModule } from "../modules/stream/stream.module";
+import { StorageModule } from "../modules/libs/storage/storage.module";
 
 @Module({
 	imports: [
@@ -40,9 +40,9 @@ import { StreamModule } from "../modules/stream/stream.module";
 		TotpModule,
 		DeactivateModule,
 		CronModule,
-		StorageService,
+		StorageModule,
 		ProfileModule,
-		StreamModule
+		StreamModule,
 	],
 })
 export class CoreModule {}
