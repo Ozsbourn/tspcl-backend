@@ -28,10 +28,7 @@ export class ChatService {
 		return messages;
 	}
 
-	public async sendMessage(
-		userId: string,
-		input: SendMessageInput
-	) {
+	public async sendMessage(userId: string, input: SendMessageInput) {
 		const { text, streamId } = input;
 
 		const stream = await this.prismaService.stream.findUnique({
@@ -60,6 +57,9 @@ export class ChatService {
 						id: streamId,
 					},
 				},
+			},
+			include: {
+				stream: true,
 			},
 		});
 
