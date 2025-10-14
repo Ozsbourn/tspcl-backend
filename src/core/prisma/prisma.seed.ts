@@ -5,7 +5,7 @@ import { hash } from "argon2";
 const prisma = new PrismaClient({
 	transactionOptions: {
 		maxWait: 5000,
-		timeout: 10000,
+		timeout: 15000,
 		isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
 	},
 });
@@ -138,6 +138,12 @@ async function main() {
 									],
 								},
 							},
+							notificationSettings: {
+								create: {
+									siteNotifications: true,
+									telegramNotifications: false,
+								}
+							}
 						},
 					});
 					const randomTitles = streamTitles[randomCategory.slug];
