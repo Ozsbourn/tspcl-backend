@@ -1,4 +1,4 @@
-import { TokenType } from "@/prisma/generated";
+import { TokenType, User } from "@/prisma/generated";
 import { PrismaService } from "@/src/core/prisma/prisma.service";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
@@ -134,6 +134,24 @@ export class TelegramService extends Telegraf {
 		await this.telegram.sendMessage(chatId, MESSAGES.accountDeactivated, {
 			parse_mode: "HTML",
 		});
+	}
+
+	public async sendStreamStartMessage(chatId: string, channel: User) {
+		await this.telegram.sendMessage(
+			chatId,
+			MESSAGES.streamStarted(channel),
+			{ parse_mode: "HTML" }
+		);
+	}
+
+	public async sendNewFollowing(chatId: string, follower: User) {
+		const user = await this.findUserByChatId(chatId);
+
+		await this.telegram.sendMessage(
+			chatId,
+			MESSAGES.newFollowing(follower, user!.followings.length),
+			{ parse_mode: "HTML" }
+		);
 	}
 
 	private async connectTelegram(userId: string, chatId: string) {

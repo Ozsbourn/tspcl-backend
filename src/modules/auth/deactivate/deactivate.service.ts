@@ -13,13 +13,15 @@ import { generateToken } from "@/src/shared/utils/generate-token.util";
 import { getSessionMetadata } from "@/src/shared/utils/session-metadata.util";
 import { DeactivateAccountInput } from "./inputs/deactivate-account.input";
 import { verify } from "argon2";
+import { TelegramService } from "../../libs/telegram/telegram.service";
 
 @Injectable()
 export class DeactivateService {
 	public constructor(
 		private readonly prismaService: PrismaService,
 		private readonly mailService: MailService,
-		private readonly configService: ConfigService
+		private readonly configService: ConfigService,
+		private readonly telegramService: TelegramService
 	) {}
 
 	public async deactivateAccount(
@@ -43,6 +45,8 @@ export class DeactivateService {
 			await this.sendDeactivationToken(req, user, userAgent);
 			return { message: "Need verification code" };
 		}
+
+		//
 
 		await this.validateDeactivationToken(req, pin);
 
@@ -103,6 +107,18 @@ export class DeactivateService {
 			deactivationToken.token,
 			metadata
 		);
+
+		if (
+			deactivationToken.user?.notificationSettings
+				?.telegramNotifications &&
+			deactivationToken.user?.telegramId
+		) {
+			await this.telegramService.sendPasswordResetToken(
+				deactivationToken.user?.telegramId,
+				deactivationToken.token,
+				metadata
+			);
+		}
 
 		return true;
 	}
