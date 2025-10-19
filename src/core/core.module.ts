@@ -25,6 +25,11 @@ import { CategoryModule } from "../modules/category/category.module";
 import { ChatModule } from "../modules/chat/chat.module";
 import { FollowModule } from "../modules/follow/follow.module";
 import { ChannelModule } from "../modules/channel/channel.module";
+import { StripeModule } from "../modules/libs/stripe/stripe.module";
+import { getStripeConfig } from "./config/stripe.config";
+import { PlanModule } from "../modules/sponsorship/plan/plan.module";
+import { TransactionModule } from "../modules/sponsorship/transaction/transaction.module";
+import { SubscriptionModule } from "../modules/sponsorship/subscription/subscription.module";
 
 @Module({
 	imports: [
@@ -41,6 +46,11 @@ import { ChannelModule } from "../modules/channel/channel.module";
 		LivekitModule.registerAsync({
 			imports: [ConfigModule],
 			useFactory: getLiveKitConfig,
+			inject: [ConfigService],
+		}),
+		StripeModule.registerAsync({
+			imports: [ConfigModule],
+			useFactory: getStripeConfig,
 			inject: [ConfigService],
 		}),
 		PrismaModule,
@@ -63,6 +73,10 @@ import { ChannelModule } from "../modules/channel/channel.module";
 		ChatModule,
 		FollowModule,
 		ChannelModule,
+		StripeModule,
+		PlanModule,
+		TransactionModule,
+		SubscriptionModule,
 	],
 })
 export class CoreModule {}
