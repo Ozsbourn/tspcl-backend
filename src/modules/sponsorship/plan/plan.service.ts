@@ -1,5 +1,5 @@
 import { PrismaService } from "@/src/core/prisma/prisma.service";
-import { ForbiddenException, Injectable } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { StripeService } from "../../libs/stripe/stripe.service";
 import { User } from "@/prisma/generated";
 import { CreatePlanInput } from "./inputs/create-plan.input";
@@ -57,6 +57,29 @@ export class PlanService {
 					},
 				},
 			},
+		});
+
+		return true;
+	}
+
+	public async remove(planId: string) {
+		const plan = await this.prismaService.sponsorshipPlan.findUnique({
+			where: {
+				id: planId
+			}
+		});
+
+		if (!plan) {
+			throw new NotFoundException(`Plan wasn't found`);
+		}
+
+		await this.stripeService.plans.del(plan.stripePlanId);
+		await this.stripeService.products.del(plan.stripeProductId);
+
+		await this.prismaService.sponsorshipPlan.delete({
+			where: {
+				id: plan.id
+			}
 		});
 
 		return true;
