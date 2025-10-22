@@ -7,7 +7,6 @@ import {
 import { ConfigService } from "@nestjs/config";
 import { StripeService } from "../../libs/stripe/stripe.service";
 import type { User } from "@/prisma/generated";
-import { channel } from "diagnostics_channel";
 
 @Injectable()
 export class TransactionService {
