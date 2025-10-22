@@ -1,4 +1,4 @@
-import type { User } from "@/prisma/generated";
+import type { SponsorshipPlan, User } from "@/prisma/generated";
 import type { SessionMetadata } from "@/src/shared/types/session-metadata.types";
 
 export const MESSAGES = {
@@ -57,4 +57,9 @@ export const MESSAGES = {
 	newFollowing: (follower: User, followersCount: number) =>
 		`<b>You have new follower!</b>\n\n This is user <a href="https://streplat.ru/${follower.username}">${follower.displayName}</a>\n` +
 		`Now you have ${followersCount} of followers.`,
+	newSponsorship: (plan: SponsorshipPlan, sponsor: User) =>
+		`<b>You have new sponsor!</b>` +
+		`You got new sponsorship on <b>${plan.title}</b> plan.` +
+		`  Amount: <b>${plan.price}</b>` +
+		`  Sponsor: <a href="https://streplat.ru/${sponsor.username}">${sponsor.displayName}</a>`,
 };
