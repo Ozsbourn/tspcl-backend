@@ -30,6 +30,7 @@ import { getStripeConfig } from "./config/stripe.config";
 import { PlanModule } from "../modules/sponsorship/plan/plan.module";
 import { TransactionModule } from "../modules/sponsorship/transaction/transaction.module";
 import { SubscriptionModule } from "../modules/sponsorship/subscription/subscription.module";
+import { TelegramModule } from "../modules/libs/telegram/telegram.module";
 
 @Module({
 	imports: [
@@ -58,6 +59,7 @@ import { SubscriptionModule } from "../modules/sponsorship/subscription/subscrip
 		AccountModule,
 		SessionModule,
 		MailModule,
+		TelegramModule,
 		VerificationModule,
 		PasswordRecoveryModule,
 		TotpModule,
