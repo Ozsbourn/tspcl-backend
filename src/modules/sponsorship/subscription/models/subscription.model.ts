@@ -1,8 +1,9 @@
 import { type SponsorshipSubscription } from "@/prisma/generated";
 import { UserModel } from "@/src/modules/auth/account/models/user.model";
-import { Field, ID } from "@nestjs/graphql";
+import { Field, ID, ObjectType } from "@nestjs/graphql";
 import { PlanModel } from "../../plan/models/plan.model";
 
+@ObjectType()
 export class SubscriptionModel implements SponsorshipSubscription {
     @Field(() => ID)
     public id: string;

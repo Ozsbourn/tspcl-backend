@@ -1,9 +1,10 @@
 import type { SponsorshipPlan } from "@/prisma/generated";
 import { UserModel } from "@/src/modules/auth/account/models/user.model";
-import { Field, ID } from "@nestjs/graphql";
+import { Field, ID, ObjectType } from "@nestjs/graphql";
 
+@ObjectType()
 export class PlanModel implements SponsorshipPlan {
-   	@Field(() => ID)
+    @Field(() => ID)
     public id: string;
 
     @Field(() => String)
@@ -21,7 +22,7 @@ export class PlanModel implements SponsorshipPlan {
     public channel: UserModel;
     @Field(() => String, { nullable: true })
     public channelId: string;
-    
+
     @Field(() => Date)
     public createdAt: Date;
     @Field(() => Date)

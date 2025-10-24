@@ -1,13 +1,14 @@
 import { TransactionStatus, type Transaction } from "@/prisma/generated";
 import { UserModel } from "@/src/modules/auth/account/models/user.model";
-import { Field, ID, registerEnumType } from "@nestjs/graphql";
+import { Field, ID, ObjectType, registerEnumType } from "@nestjs/graphql";
 
 registerEnumType(TransactionStatus, {
-	name: 'TransactionStatus'
-})
+    name: "TransactionStatus",
+});
 
+@ObjectType()
 export class TransactionModel implements Transaction {
-   	@Field(() => ID)
+    @Field(() => ID)
     public id: string;
 
     @Field(() => Number)
@@ -21,11 +22,11 @@ export class TransactionModel implements Transaction {
     @Field(() => TransactionStatus)
     public status: TransactionStatus;
 
-	@Field(() => UserModel)
+    @Field(() => UserModel)
     public user: UserModel;
     @Field(() => String, { nullable: true })
     public userId: string;
-    
+
     @Field(() => Date)
     public createdAt: Date;
     @Field(() => Date)

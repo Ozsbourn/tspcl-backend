@@ -22,8 +22,8 @@ export class ChannelResolver {
         return this.channelService.findFollowersCountByChannel(channelId);
     }
 
-    @Query(() => [SubscriptionModel], { name: "findChannelSponsors" })
-    public async findChannelSponsors(@Args("channelId") channelId: string) {
+    @Query(() => [SubscriptionModel], { name: "findSponsorsByChannel" })
+    public async findSponsorsByChannel(@Args("channelId") channelId: string) {
         return this.channelService.findSponsorsByChannel(channelId);
     }
 }
