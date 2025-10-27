@@ -62,4 +62,8 @@ export const MESSAGES = {
 		`You got new sponsorship on <b>${plan.title}</b> plan.` +
 		`  Amount: <b>${plan.price}</b>` +
 		`  Sponsor: <a href="https://streplat.ru/${sponsor.username}">${sponsor.displayName}</a>`,
+	enableTwoFactor: `Force your defence. Enable two-factor authentication.`,
+	verifyChannel:
+		`ヾ(≧ ▽ ≦)ゝ <b>Congratulations! your channel was verified.</b>\n\n` +
+		`Verification badge confirms that your channel is original and give more trust for your viewers or visitors.`,
 };
